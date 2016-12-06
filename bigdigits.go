@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"path/filepath"
+	"log"
 )
 
 func main(){
@@ -13,9 +14,9 @@ func main(){
 	}
 
 	stringOfDigits := os.Args[1]
-	for row := rang bigDigits[0] {
+	for row := range bigDigits[0] {
 		line := ""
-		for column := rang stringOfDigits {
+		for column := range stringOfDigits {
 			digit := stringOfDigits[column] - '0'
 			if 0 <= digit && digit <= 9 {
 				line += bigDigits[digit][row] + "    "
@@ -23,7 +24,7 @@ func main(){
 				log.Fatal("invalid whole number")
 			}
 		}
-		fmt.println(line)
+		fmt.Println(line)
 	}
 }
 
