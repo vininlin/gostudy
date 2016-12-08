@@ -5,7 +5,7 @@ import "errors"
 type Stack []interface{}
 
 func (stack *Stack) Pop() (interface{},error){
-	theStack = *stack
+	theStack := *stack
 	if len(theStack) == 0 {
 		return nil,errors.New("can't Pop()  an empty stack")
 	}
@@ -18,7 +18,7 @@ func (stack *Stack) Push(x interface{}){
 	*stack = append(*stack,x)
 }
 
-func (stack Stack) Top(interface{}, error){
+func (stack Stack) Top() (interface{}, error){
 	if len(stack) == 0 {
 		return nil , errors.New("can't Top()  an empty stack")
 	}
