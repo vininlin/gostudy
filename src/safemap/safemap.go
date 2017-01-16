@@ -35,7 +35,7 @@ type SafeMap interface {
 	Delete(string)
 	Find(string) (interface{},bool)
 	Len() int
-	Update(string UpdateFunc)
+	Update(string, UpdateFunc)
 	Close() map[string]interface{}
 }
 
