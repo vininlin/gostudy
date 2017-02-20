@@ -3,16 +3,22 @@ package main
 import (
 	"runtime"
 	"os"
+	"fmt"
+	"path/filepath"
+	"safeslice"
+	"regexp"
 	"log"
 	"bufio"
 	"io"
-	"regexp"
-	"safeslice"
-	"fmt"
-	"path/filepath"
 )
 
 var workers = runtime.NumCPU()
+
+type errInfo struct {
+	err string
+	count int
+	stacks string
+}
 
 func main()  {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // Use all the machine's cores
@@ -24,9 +30,9 @@ func main()  {
 	done := make(chan struct{}, workers)
 	pageList := safeslice.New()
 	go readLines(os.Args[1], lines)
-	getRx := regexp.MustCompile(`POST[ \t]+([^ \t\n]+[.][^ \t\n]+)`)
+	errRx := regexp.MustCompile(`ERROR ~[ \t]+(.*)`)
 	for i := 0; i < workers; i++ {
-		go processLines(done, getRx,pageList,lines)
+		go processLines(done, errRx,pageList,lines)
 	}
 	waitUtil(done)
 	showResults(pageList)
@@ -55,11 +61,10 @@ func readLines(filename string, lines chan<- string)  {
 	close(lines)
 }
 
-func processLines(done chan<- struct{}, getRx *regexp.Regexp,
+func processLines(done chan<- struct{}, errRX *regexp.Regexp,
 	pageList safeslice.SafeSlice, lines <-chan string)  {
 	for line := range lines {
-		if matches := getRx.FindStringSubmatch(line); matches != nil {
-			//fmt.Println(matches[0])
+		if matches := errRX.FindStringSubmatch(line); matches != nil {
 			pageList.Append(matches[1])
 		}
 	}
