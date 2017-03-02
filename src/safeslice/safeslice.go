@@ -7,7 +7,7 @@ type commandData struct {
 	index int
 	item interface{}
 	result chan<- interface{}
-	data []interface{}
+	data chan<- []interface{}
 	updater UpdateFunc
 }
 
@@ -26,7 +26,7 @@ type UpdateFunc func(interface{}) interface{}
 
 type SafeSlice interface {
 	Append(interface{})
-	At(int)
+	At(int) interface{}
 	Close() []interface{}
 	Delete(int)
 	Len() int
@@ -40,7 +40,7 @@ func New() SafeSlice{
 }
 
 func (slice safeSlice) run() {
-	list := make([]interface{},0)
+	list := make([]interface{}, 0)
 	for command := range slice {
 		switch command.action {
 		case insert:
@@ -78,21 +78,22 @@ func (slice safeSlice) Delete(index int){
 
 func (slice safeSlice) At(index int) interface{}{
 	reply := make(chan interface{})
-	slice <- commandData{at,nil,reply,nil,nil}
+	slice <- commandData{at,index,reply,nil,nil,nil}
 	return <-reply
 }
 
 func (slice safeSlice) Len() int{
 	reply := make(chan interface{})
-	slice <- commandData{length,nil,reply,nil,nil}
+	slice <- commandData{action: length, result: reply}
+	return (<-reply).(int)
 }
 
 func (slice safeSlice) Update(index int,updater UpdateFunc) {
 	slice <- commandData{action: update,index: index,updater: updater}
 }
 
-func (slice safeSlice) Close() []interface{}{
-	reply := make(chan interface{})
+func (slice safeSlice) Close() []interface{} {
+	reply := make(chan []interface{})
 	slice <- commandData{action: end,data: reply}
 	return <-reply
 

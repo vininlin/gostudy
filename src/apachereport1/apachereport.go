@@ -58,10 +58,10 @@ func readLines(filename string,lines chan<- string)  {
 func processLines(done chan<- struct{},pageMap safemap.SafeMap,lines <-chan string)  {
 	getRx := regexp.MustCompile(`GET[ \t]+([^ \t\n]+[.]html?)`)
 	incrementer := func(value interface{},found bool) interface{} {
-		if found {
-			return value.(int) + 1
-		}
-		return 1
+			if found {
+				return value.(int) + 1
+			}
+			return 1
 	}
 	for i := 0 ; i < workers; i++ {
 		go func() {
