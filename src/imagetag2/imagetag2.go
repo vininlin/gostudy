@@ -54,8 +54,10 @@ func waitAndProcessResults(done <-chan struct{} , results <-chan string)  {
 	for working := workers ; working > 0 ; {
 		select {
 		case result := <- results :
+			fmt.Println("blocking case1")
 			fmt.Println(result)
 		case <- done :
+			fmt.Println("blocking case2")
 			working--
 		}
 	}
@@ -63,8 +65,10 @@ DONE:
 	for {
 		select {
 		case result := <- results :
+			fmt.Println("nonblocking case1")
 			fmt.Println(result)
 		default :
+			fmt.Println("nonblocking default")
 			break DONE
 		}
 	}
