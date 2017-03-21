@@ -72,6 +72,7 @@ func computeIndent(slice []string) (string, int)  {
 }
 
 func addEntry(level int, key, value string, entries *Entries)  {
+	//fmt.Println("level=%d,key=%s,value=%s",level,key,value)
 	if level == 0 {
 		*entries = append(*entries, Entry{key, value, make(Entries, 0)})
 	} else {
