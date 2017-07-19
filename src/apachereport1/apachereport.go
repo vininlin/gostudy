@@ -56,7 +56,7 @@ func readLines(filename string,lines chan<- string)  {
 }
 
 func processLines(done chan<- struct{},pageMap safemap.SafeMap,lines <-chan string)  {
-	getRx := regexp.MustCompile(`GET[ \t]+([^ \t\n]+[.]html?)`)
+	getRx := regexp.MustCompile(`GET[ \t]+([^ \t\n]+[.](html|js|css)?)`)
 	incrementer := func(value interface{},found bool) interface{} {
 			if found {
 				return value.(int) + 1
@@ -67,6 +67,8 @@ func processLines(done chan<- struct{},pageMap safemap.SafeMap,lines <-chan stri
 		go func() {
 			for line := range lines {
 				if matches := getRx.FindStringSubmatch(line); matches != nil {
+					fmt.Println("m0=",matches[0])
+					fmt.Println("m1=",matches[1])
 					pageMap.Update(matches[1],incrementer)
 				}
 			}

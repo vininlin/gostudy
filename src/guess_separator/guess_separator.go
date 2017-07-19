@@ -16,9 +16,11 @@ func main()  {
 		os.Exit(1)
 	}
 
-	separators := []string{"\t", "*", "|", "•"}
+	separators := []string{"\t", "_", "/", "."}
 	fmt.Println(os.Args[1])
 	linesRead, lines := readUpToNLines(os.Args[1], 5)
+	fmt.Println(linesRead)
+	fmt.Println(lines)
 	counts := createCounts(lines, separators, linesRead)
 	separator := guessSep(counts, separators, linesRead)
 	report(separator)
@@ -28,6 +30,8 @@ func guessSep(counts [][]int, separators []string, linesRead int) string {
 	for sepIndex := range separators {
 		same := true
 		count := counts[sepIndex][0]
+		fmt.Println("sepIndex=",sepIndex)
+		fmt.Println(count)
 		for lineIndex := 0; lineIndex < linesRead; lineIndex++ {
 			if counts[sepIndex][lineIndex] != count {
 				same = false
@@ -60,6 +64,7 @@ func createCounts(lines, separators []string, linesRead int) [][]int  {
 			counts[sepIndex][lineIndex] = strings.Count(line,separators[sepIndex])
 		}
 	}
+	fmt.Println(counts)
 	return counts
 }
 
